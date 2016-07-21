@@ -1,0 +1,828 @@
+<style>
+
+    html{ 
+       background-color: #E0E0E0; 
+    }
+    
+    #container{
+       position: relative; 
+       padding: 20px;
+       margin: 0 auto;
+       width: 90%; 
+       background-color: white;
+       box-shadow: 0 0 20px 5px #888888;
+       font-family: Century Gothic, Arial, Helvetica, sans-serif;
+    } 
+    
+    h1 { 
+        color: #3366FF;
+     }
+    
+    
+    h3 {
+       color: #606060; 
+      }
+      
+    td {
+       padding: 5px; 
+       }
+       
+    #general td:nth-child(1) {
+        background-color: #404040 ;
+        color: #FFF;
+       }
+
+    #general td:nth-child(5) { 
+        width: 50%; 
+     }
+     
+    #general textarea{ 
+        width: 100%; 
+        resize: none; 
+    }
+    
+    #leaderChars tr:first-child {
+        background-color: #404040 ;
+        color: #FFF;
+       }
+       
+   #domDims tr:first-child {
+        background-color:#404040 ; 
+        color: #FFF; 
+
+   }
+   
+   #domDims{
+      clear: both; 
+      width: 100%; 
+   }
+   
+   #domDims td:first-child {
+      width:  25%; 
+   }
+   
+   #domDims td:nth-child(2){
+        width: 30%; 
+   }
+   
+   #output a { 
+        text-decoration: none; 
+        font-size: 22px; 
+   }
+   
+  #output a:hover { 
+        color: #FF0099;
+   }
+       
+  
+  #subTable { 
+      
+      width : 100%; 
+      
+  }
+  
+  #subTable tr td:first-child {
+      background-color: #989898;
+      color: #FFFFFF;
+      font-size: 12px; 
+        
+   }
+    
+  
+  #mainAddressSubTable {
+      
+      width: 100%; 
+ }
+ 
+  
+  
+  #mainAddressSubTable  td:first-child{
+      background-color: #989898; 
+      color: #FFFFFF;
+      font-size: 12px; 
+   }
+  
+  .dimSelect {
+       width: 100%; 
+       
+  }
+  
+  .domSelect {
+      width: 94%;
+
+  }
+  
+    
+  #leaderChars {
+      width: 100%; 
+        
+   }
+     
+   #general{
+       width: 40%; 
+       /*float: left;*/
+   }
+    
+    
+   #notes{
+        width: 100%; 
+    }
+    
+   #notes tr:first-child {
+        background-color:#404040 ; 
+        color:  #FFF; 
+    }
+    
+    textarea {
+        width: 100%;
+        resize: none;
+    }
+    
+    
+    .styledButton{
+        background-color:  #3366FF; 
+        width: 10%; 
+        padding: 10px; 
+        color: #FFF; 
+        font-family: Century Gothic;
+    }
+    
+    .styledButton:hover{
+        cursor: pointer; 
+        background-color: #6699FF;
+    }
+    
+    
+    #productionTable { 
+        /*float : right; */
+        /*overflow: hidden;*/
+        width: 100%;  
+   }
+   
+
+   
+   #productionTable td:nth-child( odd ){
+        background-color:#404040 ; 
+        color:  #FFFFFF;
+        width: 13%;
+   }
+   
+
+
+   #productionSubTable { 
+       
+       width: 100%;
+  
+   }
+  
+
+  
+  #productionSubTable td:nth-child(odd) {
+      background-color : #989898; 
+      font-size: 12px;
+      width: 10%; 
+      color: #FFFFFF;
+
+  }
+  
+  #productionSubTable td:nth-child(1){
+      width: 5%; 
+   }
+  
+  #productionSubTable td:nth-child(2){
+      width: 10%; 
+   }
+   
+  #productionSubTable td:nth-child(4){
+      width: 20%; 
+   }
+  
+  #productionSubTable td input{
+      width: 100%;
+  
+  }
+  
+  input {
+     
+      width: 100%; 
+  }
+  
+  #logistics {
+  
+      height: 75px;
+  
+  }
+  
+</style>
+
+
+<script>
+    
+    // This a call to a function in our google
+    function updateUrl( url ) { 
+    
+        var div = document.getElementById( 'output' );
+        
+   
+ 
+        div.innerHTML =  '<br><br><a href="' + url + '">View production note in google docs</a>';
+
+
+    }
+        
+    
+    function clearList( selectbox ){ 
+       
+       /*
+        * function:         clearList
+        * date-created:     2/2/15
+        * created-by:       John Mezzanotte
+        * Description:      Clear all options from a listbox 
+        * 
+        * @params:          selectbox as selectbox id 
+        *
+        */
+        
+        for(var i=selectbox.options.length-1; i>=0; i-- ){
+            selectbox.options[i] = null; 
+        }
+    }
+    
+    
+    
+    function addOptions( selectbox, dimList ){
+    
+        /*
+         * function:         addOptions
+         * date-created:     2/2/15
+         * created-by:       John Mezzanotte
+         * Description:      Takes array items and adds them as options to an 
+         *                   existing selectbox
+         *
+         * @params:          selecbox as a selectbox id
+         *                   dimList as an array of items to add to the selectbox
+         *
+         */
+       
+       
+       // clear any items that already exist in the listbox 
+        clearList( selectbox ); 
+          
+        for ( var i = 0; i < dimList.length; i++ ){
+            var opt = document.createElement( 'option' ); 
+               
+            opt.innerHTML = dimList[i]; 
+            opt.value = dimList[i]; 
+               
+            selectbox.appendChild( opt ); 
+         }
+    }
+  
+    
+    function getDomain( domID, dimID ){ 
+          
+        /* 
+         * function:            getDomain 
+         * date created:        2/2/15
+         * created-by:          John Mezzanotte
+         * Description:         Obtain the selected domain and populate its corresponding selectbox with the 
+         *                      appropriate selections
+         * @params:             domain selectbox id as String 
+         *                      dimension selectbox as String
+         */
+       
+        // build arrays of options for dimension selectboxes 
+       
+        var clDims = new Array( "n/a", "Strong leadership aptitude", "Shared vision for teaching, leading, and learning", 
+                               "Culture of trust and innovation", "Transparent Communications", "Ongoing plan for improvement", 
+                               "Modeling of technology use", "District policies", "Sustainable funding" );
+                    
+        var plDims = new Array( "n/a", "Rigorous and relevant learning outcomes", "Integrated assessment", "Pathways for learning", 
+                               "Powerful learning designs", "Rich learning resources", "New teacher roles");
+                               
+        var riDims = new Array ( "n/a", "Connectivity and capacity", "Digital devices", "Software systems for teaching and learning", 
+                                 "Administrative data systems","Technology personnel", "Out-of-school access"); 
+                               
+        var ploDims = new Array ("n/a", "Aligned and integrated outcomes", "Collaboration and community", "Shared leadershiop and ownership", 
+                                "Job-embedded and personalized learning", "Focus on evidence", "Appropriate technology", "Systemic support");
+                                
+       
+        // grab the domain selection
+        var selection = document.getElementById( domID );
+        var domain = selection.options[selection.selectedIndex].value; 
+       
+        var dim = document.getElementById( dimID );
+     
+       
+       if (domain == 1 ) { 
+         
+         // clear the existing select box options
+         clearList( dim );
+          
+         var opt = document.createElement( 'option' ); 
+          
+         opt.innerHTML = "n/a"; 
+         opt.value = "n/a"; 
+         dim.appendChild( opt ); 
+          
+      } else if (domain == 2 ) { 
+          
+          addOptions( dim, clDims ); 
+        
+      } else if ( domain == 3 ) {
+          
+          addOptions( dim, plDims );
+       
+      } else if ( domain == 4 ) {
+           
+         addOptions( dim, riDims );   
+          
+      } else if ( domain == 5 ){
+       
+         addOptions( dim, ploDims );
+      }
+        
+    }
+    
+ 
+    
+    
+    function getSelectboxValues( select ){
+    
+        /* 
+         * function:             getSelectboxValues 
+         * created-by:           John Mezzanotte
+         * date-last-modified    2/4/15
+         * description:          get all selected items from a multi selectbox
+         *
+         * return:               an array of all the values selected in the selectbox
+         *
+         * @params:              selectbox as a parameter
+         *
+         */
+         
+        var results = []; 
+      
+        for ( var i = 0; i < select.options.length; i++ ){
+            if ( select.options[i].selected ) { 
+                results.push(select.options[i].text );
+            }
+        }
+        
+        return results;
+    
+    }
+    
+    function getForm( form ){
+    
+       // This method will need to be called at the submit button
+    
+    
+        var formObj = document.getElementById( form ); 
+        
+        var dom1 = formObj.domain1.item( formObj.domain1.selectedIndex).text; 
+        var dom2 = formObj.domain2.item( formObj.domain2.selectedIndex ).text ; 
+        var dom3 = formObj.domain3.item( formObj.domain3.selectedIndex ).text ; 
+        var dom4 = formObj.domain4.item( formObj.domain4.selectedIndex ).text ; 
+        var dist = formObj.distName.value;
+        var videoID = formObj.videoID.value; 
+        var dateOne = formObj.date1.value;
+        var dateTwo = formObj.date2.value;
+        var dateThree = formObj.date3.value;
+        var contactName = formObj.name.value; 
+        var contactPhone = formObj.phone1.value; 
+        var contactPhone2 = formObj.phone2.value;
+        var contactEmail = formObj.email.value;
+        var intervieweeOne = formObj.interviewee1.value; 
+        var intervieweeTwo = formObj.interviewee2.value;
+        var intervieweeThree = formObj.interviewee3.value;
+        var leaderChar = formObj.leaderAttri.value; 
+        var notes = formObj.notesText.value; 
+        var productionTeam = formObj.productionTeam.value; 
+        var logistics = formObj.logistics.value; 
+        var dimNotes1 = formObj.dim1Notes.value;
+        var dimNotes2 = formObj.dim2Notes.value; 
+        var dimNotes3 = formObj.dim3Notes.value; 
+        var dimNotes4 = formObj.dim4Notes.value;
+        var addr1 = formObj.address1.value; 
+        var addr2 = formObj.address2.value; 
+        var city_form = formObj.city.value; 
+        var st = formObj.state.value; 
+        var zp = formObj.zip.value; 
+        var dateNotesOne = formObj.date1Notes.value; 
+        var dateNotesTwo = formObj.date2Notes.value;
+        var dateNotesThree = formObj.date3Notes.value;
+        var videoTitle = formObj.videoTitle.value;
+        
+        
+        // dimension variables hold arrays 
+        var dim1 = getSelectboxValues( document.getElementById( 'dim1' )); 
+        var dim2 = getSelectboxValues( document.getElementById( 'dim2' )); 
+        var dim3 = getSelectboxValues( document.getElementById( 'dim3' )); 
+        var dim4 = getSelectboxValues( document.getElementById( 'dim4' )); 
+        
+        
+        // create and object literal to hold the form variables 
+        var formFields = { 
+                           address1: addr1, 
+                           address2: addr2, 
+                           city: city_form, 
+                           state: st, 
+                           zip: zp, 
+                           domain1:dom1, 
+                           domain2:dom2, 
+                           domain3:dom3,
+                           domain4: dom4, 
+                           district:dist, 
+                           videoID: videoID, 
+                           date1:dateOne,
+                           date2: dateTwo, 
+                           date3: dateThree, 
+                           logistics : logistics, 
+                           team : productionTeam,
+                           contactName:contactName,
+                           contactPhone1:contactPhone, 
+                           contactPhone2: contactPhone2,
+                           contactEmail:contactEmail, 
+                           interviewee1: intervieweeOne,
+                           interviewee2: intervieweeTwo, 
+                           interviewee3: intervieweeThree,
+                           leadershipChar: leaderChar, 
+                           notes:notes, 
+                           dimension1: dim1, 
+                           dimension2: dim2, 
+                           dimension3: dim3, 
+                           dimension4: dim4,
+                           domDimNotes1 : dimNotes1, 
+                           domDimNotes2 : dimNotes2, 
+                           domDimNotes3 : dimNotes3, 
+                           domDimNotes4 : dimNotes4,
+                           date1Notes : dateNotesOne,
+                           date2Notes : dateNotesTwo,
+                           videoTitle : videoTitle
+                           };
+        
+        // test the object literal 
+        //alert( formFields.notes );
+        
+
+      
+       // pass our formField object to processForm method
+      google.script.run.withSuccessHandler( updateUrl ).processForm( formFields );
+      
+    
+    }
+    
+</script>
+
+
+<div id="container">
+
+    <h1>Future Ready Leaders</h1>
+    <h2>Production Note Assistant</h2>
+    
+    <hr />
+
+    <h3>General Information</h3>
+
+
+    <form id="myForm">
+       <table id="general">
+           <tr>
+               <td>
+                   <label for="distName">District Name</label>
+               </td>
+               <td>
+                   <input name="distName" maxlength="35" type="text" autofocus />
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <p>Main Address</p>
+               </td>
+               <td>
+                   <table id="mainAddressSubTable">
+                       <tr>
+                           <td>
+                               <label for="address1">Address 1</label>
+                           </td>
+                           <td>
+                               <input name="address1" type="text" />
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="address2">Address 2</label>
+                           </td>
+                           <td>
+                               <input name="address2" type="text" />
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="city">City</label>
+                           </td>
+                           <td>
+                               <input name="city" type="text">
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="state">State</label>
+                           </td>
+                           <td>
+                               <input name="state" type="text" />
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="zip">Zip Code</label>
+                           </td>
+                           <td>
+                               <input name="zip" type="text" />
+                           </td>
+                       </tr>
+                   </table>
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="contact">District Contact</label>
+               </td>
+               <td>
+                    <table id="subTable">
+                         <tr>
+                             <td>
+                                 <label for="name">Name:</label>
+                             </td>
+                             <td>
+                                 <input name="name" type="text" />
+                             </td>
+                         </tr>
+                         <tr>
+                             <td>
+                                 <label for="phone1">Phone:</label>
+                             </td>
+                             <td>
+                                 <input name="phone1" maxlength="14" type="text" />
+                             </td>
+                         </tr>
+                         <tr>
+                             <td>
+                                 <label for="phone2">Phone 2:</label>
+                             </td>
+                             <td>
+                                 <input name="phone2" maxlength="14" type="text" />
+                             </td>
+                         </tr>
+                         <tr>
+                              <td>
+                                  <label for="email">Email:</label>
+                              </td>
+                              <td>
+                                  <input name="email" type="text" />
+                             </td>
+                         </tr>
+                     </table>
+               </td>
+           </tr>
+       </table>
+       
+       <table id="productionTable">
+           <tr>
+               <td>
+                   <label for="videoID">Video ID</label>
+               </td>
+               <td>
+                   <input name="videoID" type="text" placeholder="distNum_videoNum_distAbbr_Dom1-Dom2_v#"/>
+    
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="videoTitle">Video Title</label>
+               </td>
+               <td>
+                   <input name="videoTitle" type="text"/>
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <p>Shoot Dates</p>
+               </td>
+               <td>
+                   <table id="productionSubTable">
+                       <tr>
+                           <td>
+                               <label for="date1">Date 1</label>
+                           </td>
+                           <td>
+                               <input name="date1" placeholder="mm-dd-yyyy"type="text" />
+                           </td>
+                           <td>
+                             
+                              <label for="interviewee1">Day 1 Interviewees</label>
+                           </td>
+                           <td>
+                               <textarea name="interviewee1"></textarea>
+                           </td>
+                           <td>
+                               <label for="date1Notes">Day 1 Notes</label>
+                           </td>
+                           <td>
+                               <textarea id="date1Notes"></textarea>
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="date2">Date 2</label>
+                           </td>
+                           <td>
+                               <input name="date2" placeholder="mm-dd-yyyy" type="text" />
+                           </td>
+                           <td>
+                             
+                              <label for="interviewee2">Day 2 Interviewees</label>
+                           </td>
+                           <td>
+                               <textarea name="interviewee2"></textarea>
+                           </td>
+                           <td>
+                               <label for="date2Notes">Day 2 Notes</label>
+                           </td>
+                           <td>
+                               <textarea id="date2Notes"></textarea>
+                           </td>
+                      </tr>
+                       <tr>
+                           <td>
+                               <label for="date3">Date 3</label>
+                           </td>
+                           <td>
+                               <input name="date3" placeholder="mm-dd-yyyy" type="text" />
+                           </td>
+                           <td>
+                             
+                              <label for="interviewee3">Day 3 Interviewees</label>
+                           </td>
+                           <td>
+                               <textarea name="interviewee3"></textarea>
+                           </td>
+                           <td>
+                               <label for="date3Notes">Day 3 Notes</label>
+                           </td>
+                           <td>
+                               <textarea id="date3Notes"></textarea>
+                           </td>
+                      </tr>
+                   </table>
+               </td>
+           </tr>
+   
+           
+
+  
+           <tr>
+               <td>
+                   <label for="productionTeam">Production Team</label>
+               </td>
+               <td>
+                   <textarea name="productionTeam"></textarea>
+               </td>
+           </tr>
+           <tr>
+               <td>
+                  <label for="logistics">Logistics</label>
+               </td>
+               <td>
+                   <textarea id="logistics" placeholder="Enter important notes on site visit logistics"></textarea>
+               </td>
+           </tr>
+       </table>
+  
+  <br style="clear: both" />
+  <br style="clear: both" />
+  <hr style="clear:both"   />
+  
+  
+  <h3 style="clear: both">Domains and Dimensions</h3>
+      <table id="domDims">
+          <tr>
+              <td> Domain </td>
+              <td> Dimension <em style="color:#33FF66; font-size: 11px; float: right">*ctrl + click for multi-select<br>*apple click on mac</em></td>
+              <td> Notes </td>
+          </tr>
+          <tr>
+              <td>
+                  <label for="domain1">1.</label>
+                  <select id="domain1" class="domSelect" onChange="getDomain( 'domain1', 'dim1' )"> 
+                      <option value="1">n/a</option>
+                      <option value="2">Collaborative Leadership</option>
+                      <option value="3">Personalized Learning</option>
+                      <option value="4">Robust Infrastructure</option>
+                      <option value="5">Professional Learning Opportunities</option>
+                  </select>
+             </td>
+             <td>
+                <select id="dim1" class="dimSelect" multiple></select>
+             </td>
+             <td>
+                <textarea id="dim1Notes"></textarea>
+             </td>
+          </tr>
+          <tr>
+              <td>
+                  <label for="domain2">2.</label>
+                  <select id="domain2" class="domSelect" onChange="getDomain('domain2', 'dim2')"> 
+                      <option value="1">n/a</option>
+                      <option value="2">Collaborative Leadership</option>
+                      <option value="3">Personalized Learning</option>
+                      <option value="4">Robust Infrastructure</option>
+                      <option value="5">Professional Learning Opportunities</option>
+                  </select>
+             </td>
+             <td>
+                <select id="dim2" class="dimSelect" multiple></select>
+             </td>
+             <td>
+                 <textarea id="dim2Notes"></textarea>
+             </td>
+          </tr>
+          <tr>
+              
+              <td>
+                  <label for="domain3">3.</label>
+                  <select id="domain3"  class="domSelect" onChange="getDomain('domain3', 'dim3')"> 
+                      <option value="1">n/a</option>
+                      <option value="2">Collaborative Leadership</option>
+                      <option value="3">Personalized Learning</option>
+                      <option value="4">Robust Infrastructure</option>
+                      <option value="5">Professional Learning Opportunities</option>
+                  </select>
+             </td>
+             <td>
+                 <select id="dim3" class="dimSelect" multiple></select>
+             </td>
+             <td>
+                 <textarea id="dim3Notes"></textarea>
+             </td>
+          </tr>
+          <tr>
+              <td>
+                  <label for="domain4">4.</label>
+                  <select id="domain4" class="domSelect" onChange="getDomain('domain4', 'dim4')"> 
+                      <option value="1">n/a</option>
+                      <option value="2">Collaborative Leadership</option>
+                      <option value="3">Personalized Learning</option>
+                      <option value="4">Robust Infrastructure</option>
+                      <option value="5">Professional Learning Opportunities</option>
+                  </select>
+             </td>
+             <td>
+                 <select id="dim4" class="dimSelect" multiple></select>
+             </td>
+             <td>
+                 <textarea id="dim4Notes"></textarea>
+             </td>
+          </tr>
+      </table>
+      
+    <hr />
+    
+   <h3>Leadership</h3>
+       <table id="leaderChars">
+           <tr>
+               <td><label for="leaderAttri">Characteristics/Attributes</label></td>
+           </tr>
+           <tr>
+               <td><textarea id="leaderAttri"></textarea></td>
+           </tr>
+       </table>
+       
+    <hr />
+    <h3>Notes</h3>
+    
+    <table id="notes">
+           <tr>
+               <td><label for="notesText">Additional Comments</label></td>
+           </tr>
+           <tr>
+               <td><textarea name="notesText"></textarea></td>
+           </tr>
+       </table>
+      
+     
+      
+    <br />
+    <hr />
+    
+    <h3>Create Production Note</h3>
+    <input type="button" value="submit" class="styledButton"
+               onclick="getForm( 'myForm' )"/>
+               
+  
+</form>
+
+<div id="output"></div>
+
+</div>
